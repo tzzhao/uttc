@@ -1,13 +1,249 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.App {
+    display: flex;
+    width: 96%;
+    max-width: 600px;
+    flex-wrap: wrap;
+    margin: auto;
+    justify-content: center;
+}
+
+.grid-container {
+    position: relative;
+    width: 26%;
+    padding-bottom: 26%;
+    float: left;
+    height: 0;
+}
+
+.grid {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes appear3 {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes appear2 {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 80%;
+        opacity: 1;
+    }
+}
+
+.grid .cells-container {
+    width: 96%;
+    height: 96%;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    border: solid 5px;
+    animation-duration: 500ms;
+    animation-name: appear;
+}
+
+.grid .cells-container img {
+    width: 80%;
+    animation-duration: 500ms;
+    animation-name: appear2;
+}
+
+.cell-container {
+    position: relative;
+    width: 30%;
+    padding-bottom: 30%;
+    float: left;
+    height: 0;
+}
+
+.cell {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    box-sizing: border-box;
+    border: solid 3px;
+    transition: all 300ms;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.bg-black {
+    background-color: hsl(210, 33%, 9%);
+    color: #F2AA4CFF;
+}
+
+.bg-orange {
+    background-color: hsl(34, 86%, 62%);
+    color: #101820FF;
+}
+
+.cell.clickable:hover {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    background-color: hsl(210, 33%, 60%);
+}
+
+.cell.clickable {
+    background-color: hsl(210, 33%, 40%);
+}
+
+.cell.clickable img {
+    opacity: 0;
+}
+
+.cell.clickable:hover img {
+    opacity: 1;
+    transition: all 500ms;
+}
+
+.cell.clickable {
+    background-color: hsl(210, 33%, 40%);
+}
+
+.cell img {
+    width: 80%;
+}
+
+.cell:not(".clickable") img {
+    animation-duration: 300ms;
+    animation-name: appear2;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 96%;
+    max-width: 600px;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+header .button-group {
+    padding: 10px;
+}
+
+button {
+    margin: 2px 2%;
+    padding: 4px;
+    box-sizing: border-box;
+    font-weight: 600;
+    display: inline-block;
+    border: 0.1em solid #101820FF;
+    border-radius: 0.12em;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+    color: hsl(210, 33%, 9%);
+    background-color: #F2AA4CFF;
+}
+
+button:hover, button:active, button:focus {
+    color: #F2AA4CFF;
+    background-color: hsl(210, 33%, 9%);
+}
+
+.winner-modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    animation-duration: 1s;
+    animation-name: appear3;
+}
+
+.winner-modal .winner-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: white;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+}
+
+.winner-modal .winner-modal-container {
+    position: relative;
+    display: flex;
+    width: 50%;
+    z-index: 1;
+    margin: auto;
+    justify-content: center;
+    background-color: #F2AA4CFF;
+    align-items: center;
+    min-height: 50px;
+    flex-direction: column;
+    padding: 20px;
+    min-width: 80px;
+    max-width: 300px;
+}
+
+.winner-message {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.winner-message div {
+    line-height: 18px;
+}
+
+.shape-container {
+    width: 16px;
+    height: 16px;
+    display: grid;
+    margin-right: 6px;
 }
