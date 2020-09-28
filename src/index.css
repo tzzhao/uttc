@@ -15,7 +15,7 @@ code {
 .App {
     display: flex;
     width: 96%;
-    max-width: 600px;
+    max-width: 720px;
     flex-wrap: wrap;
     margin: auto;
     justify-content: center;
@@ -159,13 +159,13 @@ header {
     flex-direction: column;
     margin: auto;
     width: 96%;
-    max-width: 600px;
+    max-width: 720px;
     text-align: center;
 }
 
 header h1 {
     margin-bottom: 0;
-    font-size: 20px;
+    font-size: 24px;
 }
 
 header .button-group {
@@ -185,6 +185,7 @@ button {
     transition: all 0.2s;
     color: hsl(210, 33%, 9%);
     background-color: #F2AA4CFF;
+    font-size: 20px;
 }
 
 button:hover, button:active, button:focus {
