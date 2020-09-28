@@ -9,7 +9,7 @@
 
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
-var count = 0;
+var count = 1;
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||

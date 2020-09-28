@@ -10,16 +10,16 @@ import {Winner} from "./components/Winner/Winner";
 let App = ({startAgain, previousAction, nextAction, ...props}) => {
   return (
       <div className="app-container">
-        <header>
-          <div><h1>Ultimate Tic Tac Toe</h1></div>
+        <div className="header"><h1>Ultimate Tic Tac Toe</h1></div>
+        <div className="App">
+          <Board />
+        </div>
+        <div className="header">
           <div className="button-group">
             <button onClick={startAgain}>New Game</button>
             <button onClick={previousAction}>Undo move</button>
             <button onClick={nextAction}>Redo move</button>
           </div>
-        </header>
-        <div className="App">
-          <Board />
         </div>
         {isFinished(props.winner) ? <Winner startAgain={startAgain} winner={props.winner} /> : null}
       </div>

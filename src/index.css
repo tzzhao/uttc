@@ -12,19 +12,41 @@ code {
     monospace;
 }
 
+html, body, .app-container {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#root {
+    overflow: auto;
+    width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+.app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .App {
     display: flex;
     width: 96%;
-    max-width: 720px;
+    max-width: 600px;
     flex-wrap: wrap;
-    margin: auto;
     justify-content: center;
 }
 
 .grid-container {
     position: relative;
-    width: 26%;
-    padding-bottom: 26%;
+    width: 33%;
+    padding-bottom: 33%;
     float: left;
     height: 0;
 }
@@ -68,7 +90,6 @@ code {
     }
 
     to {
-        width: 80%;
         opacity: 1;
     }
 }
@@ -154,22 +175,24 @@ code {
     animation-name: appear2;
 }
 
-header {
+.header {
     display: flex;
     flex-direction: column;
-    margin: auto;
     width: 96%;
     max-width: 720px;
     text-align: center;
 }
 
-header h1 {
-    margin-bottom: 0;
+.header h1 {
+    margin-top: 30px;
+    margin-bottom: 30px;
     font-size: 24px;
 }
 
-header .button-group {
+.header .button-group {
+    margin-top: 25px;
     padding: 10px;
+    margin-bottom: 30px;
 }
 
 button {
@@ -247,4 +270,11 @@ button:hover, button:active, button:focus {
     height: 16px;
     display: grid;
     margin-right: 6px;
+}
+
+@media (max-width: 720px) {
+    .header .button-group {
+        display: flex;
+        flex-direction: column;
+    }
 }
