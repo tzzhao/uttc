@@ -12,7 +12,6 @@ export const winningMasks = [
     0b001010100
 ];
 
-export const winningMasksDict = winningMasks.reduce((dict, currentValue) => ({...dict, [currentValue]: true}), {});
-
-export const cellIdToBit = [0,1,2,3,4,5,6,7,8].map(val => 1 << val);
-export const bitToCellId = cellIdToBit.reduce((dict, currentValue, index) => ({...dict, [currentValue]: index}), {});
+export const cellIdToBitboardId = [0,1,2,3,4,5,6,7,8].map(val => 1 << val);
+export const bitboardIds = Object.values(cellIdToBitboardId);
+export const bitboardIdToCellId = cellIdToBitboardId.reduce((dict, currentValue, index) => ({...dict, [currentValue]: index}), {});

@@ -1,32 +1,81 @@
-import {cellIdToBit, winningMasksDict} from "./uttc-bitboard";
+import {cellIdToBitboardId, bitboardIds, winningMasks, winningMasksDict} from "./uttc-bitboard";
 
-const UttcGameState = function (state, nextPlayer, lastCellId) {
-  this.state = convertState(state);
+const UttcGameState = function (uiState, nextPlayer, lastCellUiId) {
+  if (uiState) {
+    this.state = convertState(uiState);
+  }
   this.nextPlayer = nextPlayer;
-  this.lastCell = cellIdToBit[lastCellId];
+  this.lastCell = cellIdToBitboardId[lastCellUiId];
 };
 
 UttcGameState.prototype.getNextMoves = function () {
-  if (typeof this.lastCell === 'undefined') {
-    return Object.values(cellIdToBit);
-  }
-  const nextGridState = this.state.gridState[2][this.lastCell];
-  if ((this.state.globalState[2] && this.lastCell) !== this.lastCell && nextGridState !== 0b111111111) {
-    return Object.values(cellIdToBit).reduce((nextMoves, currentMove) => {
-      if ((currentMove && nextGridState) !== currentMove) {
-        nextMoves.push(currentMove);
-        return nextMoves;
+  const globalGridOccupation = this.state.globalState[2];
+  const expectedNextGridState = this.state.gridState[2][this.lastCell];
+  const nextMoves = [];
+  if (this.lastCell && isMoveAvailable(globalGridOccupation, this.lastCell) && isFullGrid(expectedNextGridState)) {
+    return bitboardIds.reduce((nextMoves, move) => {
+      if (isMoveAvailable(move, expectedNextGridState)) {
+        nextMoves.push({grid: this.lastCell, cell: move});
       }
       return nextMoves;
     }, []);
+  } else {
+    for (const grid of bitboardIds) {
+      if (isMoveAvailable(globalGridOccupation, grid)) {
+        const gridOccupation = this.state.gridState[grid];
+        for (const cell of bitboardIds) {
+          if (isMoveAvailable(gridOccupation, cell)) {
+            nextMoves.push({grid, cell});
+          }
+        }
+      }
+    }
+    return nextMoves;
   }
 };
 
-UttcGameState.prototype.playMove = function (grid, cell) {
-  const player = this.nextPlayer;
-  this.state.gridState[player][grid] |= cell;
+UttcGameState.prototype.playMove = function({grid, cell}) {
+  this.state.gridState[this.nextPlayer][grid] &= cell;
+  this.state.gridState[2][grid] &= cell;
+  if (isWinningState(this.state.gridState[this.nextPlayer][grid])) {
+    this.state.globalState[this.nextPlayer][grid] |= grid;
+    this.state.globalState[2][grid] |= grid;
+  }
+  if (areAllMovedPlayed(this.state.gridState[this.nextPlayer][grid], this.state.gridState[1-this.nextPlayer][grid])) {
+    this.state.globalState[2][grid] |= grid;
+  }
   this.lastCell = cell;
-  this.nextPlayer = 1 - player;
+  this.nextPlayer = 1 - this.nextPlayer;
+};
+
+UttcGameState.prototype.cloneState = function() {
+  const clone = {
+    state: {
+      gridState: this.gridState.map(playerGrids => [...playerGrids]),
+      globalState: [...this.globalState]
+    },
+    lastCell: this.lastCell,
+    nextPlayer: this.nextPlayer
+  };
+  Object.setPrototypeOf(clone, this);
+  return clone;
+};
+
+UttcGameState.prototype.getWinner = function() {
+  if (isWinningState(this.globalState[1 - this.nextPlayer])) {
+    // current player wins
+    return 1 - this.nextPlayer;
+  } else if (isFullGrid(this.globalState[2])) {
+    const player0Score = getScore(this.globalState[0]);
+    const player1Score = getScore(this.globalState[1]);
+    if (player0Score === player1Score) {
+      return -2; // draw
+    } else {
+      return +(player0Score < player1Score);
+    }
+  } else { // No winner
+    return -1;
+  }
 };
 
 const convertState = (state) => {
@@ -42,23 +91,28 @@ const convertState = (state) => {
     let neutralGridState = 0;
     gridState.reverse().forEach((cellState, cellIndex) => {
       if (cellState === 0) {
-        player0GridState |= cellIdToBit[cellIndex];
-        neutralGridState |= cellIdToBit[cellIndex];
+        player0GridState |= cellIdToBitboardId[cellIndex];
+        neutralGridState |= cellIdToBitboardId[cellIndex];
       }
       if (cellState === 1) {
-        player1GridState |= cellIdToBit[cellIndex];
-        neutralGridState |= cellIdToBit[cellIndex];
+        player1GridState |= cellIdToBitboardId[cellIndex];
+        neutralGridState |= cellIdToBitboardId[cellIndex];
       }
     });
-    const bit = cellIdToBit[index];
-    if (winningMasksDict[player0GridState]) {
+    const bit = cellIdToBitboardId[index];
+    if (isWinningState(player0GridState)) {
       player0GlobalState |= bit;
       neutralGlobalState |= bit;
     }
-    if (winningMasksDict[player1GridState]) {
+    if (isWinningState(player1GridState)) {
       player1GlobalState |= bit;
       neutralGlobalState |= bit;
     }
+
+    if (areAllMovedPlayed(player1GridState, player0GridState)) {
+      neutralGlobalState |= bit;
+    }
+
     player0State[bit] = player0GridState;
     player1State[bit] = player1GridState;
     neutralState[bit] = neutralGridState;
@@ -69,3 +123,27 @@ const convertState = (state) => {
     globalState: [player0GlobalState, player1GlobalState, neutralGlobalState]
   }
 };
+
+function getScore(state) {
+  let score = 0;
+  while (state) {
+    score += (state & 1);
+    state >>= 1;
+  }
+}
+
+function isWinningState(state) {
+  return winningMasks.some(mask => (state & mask) === mask);
+}
+
+function isMoveAvailable(state, biboardId) {
+  return (state & biboardId) !== biboardId;
+}
+
+function areAllMovedPlayed(state1, state2) {
+  return isFullGrid(state1 | state2);
+}
+
+function isFullGrid(state) {
+  return state === 0b111111111;
+}

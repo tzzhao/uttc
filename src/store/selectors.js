@@ -19,8 +19,8 @@ export const getPlayableGrids = createSelector([getHistory, getBigGridState, get
 export const getGameWinner = createSelector([getBigGridState], (bigGridState) => {
   const winner = getWinner(bigGridState);
   if (winner === DRAW) {
-    const score0 = bigGridState.reduce((acc, currentValue) => acc + (currentValue === 0), 0);
-    const score1 = bigGridState.reduce((acc, currentValue) => acc + (currentValue === 1), 0);
+    const score0 = bigGridState.reduce((acc, currentValue) => acc + (currentValue === 0 ? 1 : 0), 0);
+    const score1 = bigGridState.reduce((acc, currentValue) => acc + (currentValue === 1 ? 1 : 0), 0);
     if (score0 === score1) {
       return DRAW;
     } else if (score0 < score1) {
